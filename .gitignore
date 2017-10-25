@@ -1,0 +1,5 @@
+*.pyc
+/img/
+/myvirtualenv/
+/fonts/
+/font-bitmaps/
