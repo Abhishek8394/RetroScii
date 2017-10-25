@@ -1,6 +1,6 @@
 # RetroScii
 
-Miss the good old days of ASCII art? I for one certainly do. This is just a fun project that converts an image into ASCII art.
+Miss the good old days of ASCII art? I for one certainly do. This project converts an image into ASCII art.
 
 ## Setup
 
@@ -14,7 +14,7 @@ With all that setup, run the following command:
     
 ### Data Setup
 
-A `TTF` font file is required to generate the initial data, that is upto the user to found. Monospace fonts are preferred, tested with `Courier New`.
+A `TTF` font file is required to generate the initial data. Monospace fonts are preferred, tested with `Courier New`.
 You can easily find this in your OS's fonts directory or use any font(let us know if you get cool results!).
 
 ## Usage
