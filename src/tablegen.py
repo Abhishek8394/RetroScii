@@ -8,7 +8,7 @@ import json
 from math import ceil
 import constants as Constants
 
-def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_out_dir, should_save=True):
+def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_out_dir, should_save=True, use_latin_1=False):
     """Generate a png image for a character.
     
     Args:
@@ -18,12 +18,14 @@ def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_o
         img_dimensions (int): Image will be a square of this size.
         bitmap_out_dir (string): Output directory
         should_save (bool): Save Image to file if this is True
+        use_latin_1 (bool, optional) : use latin-1 encoding
 
     Returns:
         (PIL.Image, string) : Image created along with its save file name
     """
     # use latin-1 encoding to support some "extended ascii"
-    chr_symbol = chr(chr_code).encode("latin-1").decode("latin-1")
+    enc = "ascii" if not use_latin_1 else "latin-1"
+    chr_symbol = chr(chr_code).encode(enc).decode(enc)
     image = Image.new("RGB", (img_dimensions,img_dimensions), (0,0,0)) #can do rgba too but not needed
     font = ImageFont.truetype(font_file, font_size)
     draw = ImageDraw.Draw(image)
@@ -36,7 +38,7 @@ def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_o
         image.save(save_path)
     return image, save_file_name
 
-def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name="meta.txt"):
+def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name="meta.txt", use_latin_1=False):
     """Generate images for a charset with font and size settings.
     
     Args:
@@ -45,6 +47,7 @@ def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out
         img_dimensions (int): Image will be a square of this size.
         bitmap_out_dir (string): Output directory
         meta_file_name (string) : filename, not the path; of the meta data file.
+        use_latin_1 (bool, optional) : use latin-1 encoding
     """
     # entire displayable ascii set
     meta_data={}
@@ -52,7 +55,8 @@ def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out
     file2i = {}
     if not os.path.exists(bitmap_out_dir):
         os.makedirs(bitmap_out_dir)
-    for i in range(32,256):
+    last_char = 128 if not use_latin_1 else 256
+    for i in range(32,last_char):
         # shows up as boxes, ignore for now
         if i>=127 and i<=160:
             continue
@@ -63,7 +67,7 @@ def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out
             print(i, "couldnt render")
             continue
         print("Generating", i, end="\r")
-        _, save_path = generate_char_image(font_file, i, font_size, img_dimensions, bitmap_out_dir)
+        _, save_path = generate_char_image(font_file, i, font_size, img_dimensions, bitmap_out_dir, use_latin_1=use_latin_1)
         i2file[i] = save_path
         file2i[save_path] = i
     print("\ndone generating images.")
@@ -209,7 +213,7 @@ def generate_table(images_folder, out_file, extension="png", precision=4, meta_f
     print("done")
 
 
-def table_from_font(font_file, font_size, img_dimensions, bitmap_out_dir, out_file, extension="png", precision=4, meta_file_name="meta.txt", scaling_optimization=True):
+def table_from_font(font_file, font_size, img_dimensions, bitmap_out_dir, out_file, extension="png", precision=4, meta_file_name="meta.txt", scaling_optimization=True, use_latin_1=False):
     """Create the stats table from the font file. Wrapper for the entire process.
     
     Args:
@@ -225,5 +229,5 @@ def table_from_font(font_file, font_size, img_dimensions, bitmap_out_dir, out_fi
     """
     if not os.path.exists(bitmap_out_dir):
         os.makedirs(bitmap_out_dir)
-    generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name=meta_file_name)
+    generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name=meta_file_name, use_latin_1=use_latin_1)
     generate_table(bitmap_out_dir, out_file, extension=extension, precision=precision, meta_file_name=meta_file_name, scaling_optimization=scaling_optimization) 

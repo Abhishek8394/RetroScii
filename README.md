@@ -19,7 +19,7 @@ You can easily find this in your OS's fonts directory or use any font(let us kno
 
 ## Usage
 
-If you are on windows, run the following command to set the encoding of the terminal, the preferred setting is "latin-1" (because 128 chars weren't enough)
+If you are on windows **and** want to use `latin-1` encodings, run the following command to set the encoding of the terminal otherwise just headover to the main script.
 
      chcp 1252
 
@@ -32,7 +32,7 @@ Running the following command for help:
         python src\main.py --convert --table-path table.txt --img image/to/convert
 
 
-Use the following command for making your own table from a font file:
+2. Use the following command for making your own table from a font file:
 
     python src\main.py --font2table --font-file path/to/ttf --bitmap-out-dir path/to/output/dir --table-out path/table.txt
 

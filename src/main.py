@@ -17,6 +17,9 @@ if __name__ == "__main__":
     parser.add_argument("--font2img", help="Generate images from a font file", action="store_true")
     parser.add_argument("--img2table", help="Generate table from images", action="store_true")
 
+    # encoding options
+    parser.add_argument("--use-latin-1", help="Use latin-1 encoding.", action="store_true")
+
     # params for ASCII art generation
     parser.add_argument("--img", help="Image to convert", default=None)
     parser.add_argument("--table-path", help="table to use", default=os.path.join("tables", "tables.txt"))
@@ -52,7 +55,7 @@ if __name__ == "__main__":
         out_file = args.table_out
         extension = args.ext
         scaling_optimization = not args.no_optimization
-
+        use_latin_1 = args.use_latin_1
         if args.font2table:
             # font to table
             TableGenerator.table_from_font(font_file, 
@@ -61,13 +64,15 @@ if __name__ == "__main__":
                                            bitmap_out_dir, 
                                            out_file, 
                                            extension=extension,
-                                           scaling_optimization=scaling_optimization)
+                                           scaling_optimization=scaling_optimization,
+                                           use_latin_1=use_latin_1)
 
         elif args.font2img:
             TableGenerator.generate_images_for_charset(font_file, 
                                                        font_size, 
                                                        img_dimensions, 
                                                        bitmap_out_dir,
+                                                       use_latin_1=use_latin_1
                                                        )
         elif args.img2table:
             TableGenerator.generate_table(bitmap_out_dir, out_file, extension=extension, scaling_optimization=scaling_optimization) 
