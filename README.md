@@ -19,19 +19,22 @@ You can easily find this in your OS's fonts directory or use any font(let us kno
 
 ## Usage
 
-The current script is a mess and will be cleaned in later updates. But running the following command should help:
+If you are on windows, run the following command to set the encoding of the terminal, the preferred setting is "latin-1"
 
-    python src/converter.py --help
+     chcp 1252
+
+Running the following command for help:
+
+    python src/main.py --help
  
-Following steps are necessary to get started:
+1. If you already have a `tables` available with you, convert any image into ASCII art with this command or use the default one provided:
 
-1. Generate character bitmaps from font file. Current command (maybe outdated):
+        python src\main.py --convert --table-path table.txt --img image/to/convert
 
-        python src/converter.py --font-path path/to/tff --bitmap-out-dir output_dir
 
-2. Generate the table from these images. Current command (maybe outdated):
+Use the following command for making your own table from a font file:
 
-        python src/converter.py --data-dir path/to/bitmap/output/dir 
+    python src\main.py --font2table --font-file path/to/ttf --bitmap-out-dir path/to/output/dir --table-out path/table.txt
 
 ## Contributing
 
