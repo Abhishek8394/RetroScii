@@ -19,7 +19,7 @@ You can easily find this in your OS's fonts directory or use any font(let us kno
 
 ## Usage
 
-If you are on windows, run the following command to set the encoding of the terminal, the preferred setting is "latin-1"
+If you are on windows, run the following command to set the encoding of the terminal, the preferred setting is "latin-1" (because 128 chars weren't enough)
 
      chcp 1252
 
