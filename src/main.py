@@ -34,6 +34,7 @@ if __name__ == "__main__":
     parser.add_argument("--ext", help="Extension of character image files", default="png")
     parser.add_argument("--table-out", help="table output file", default="table.txt")
     parser.add_argument("--no-optimization", help="dont use scaling optimization, -_-", action="store_true")
+    parser.add_argument("--create-light", help="If your console or target image has light background, dark font/subject, generate and use this table.", action="store_true")
     
 
     args = parser.parse_args()
@@ -56,6 +57,7 @@ if __name__ == "__main__":
         extension = args.ext
         scaling_optimization = not args.no_optimization
         use_latin_1 = args.use_latin_1
+        create_light = args.create_light
         if args.font2table:
             # font to table
             TableGenerator.table_from_font(font_file, 
@@ -65,14 +67,16 @@ if __name__ == "__main__":
                                            out_file, 
                                            extension=extension,
                                            scaling_optimization=scaling_optimization,
-                                           use_latin_1=use_latin_1)
+                                           use_latin_1=use_latin_1,
+                                           light_background=create_light)
 
         elif args.font2img:
             TableGenerator.generate_images_for_charset(font_file, 
                                                        font_size, 
                                                        img_dimensions, 
                                                        bitmap_out_dir,
-                                                       use_latin_1=use_latin_1
+                                                       use_latin_1=use_latin_1,
+                                                       light_background=create_light
                                                        )
         elif args.img2table:
             TableGenerator.generate_table(bitmap_out_dir, out_file, extension=extension, scaling_optimization=scaling_optimization) 

@@ -8,7 +8,7 @@ import json
 from math import ceil
 import constants as Constants
 
-def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_out_dir, should_save=True, use_latin_1=False):
+def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_out_dir, should_save=True, use_latin_1=False, light_background=False):
     """Generate a png image for a character.
     
     Args:
@@ -19,17 +19,22 @@ def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_o
         bitmap_out_dir (string): Output directory
         should_save (bool): Save Image to file if this is True
         use_latin_1 (bool, optional) : use latin-1 encoding
+        light_background (bool, optional): Generating table for light background/dark font. (Used for images with light backgrounds.)
 
     Returns:
         (PIL.Image, string) : Image created along with its save file name
     """
     # use latin-1 encoding to support some "extended ascii"
     enc = "ascii" if not use_latin_1 else "latin-1"
+    bg_color = (0,0,0)
+    font_color = (255,255,255)
+    if light_background:
+        bg_color, font_color = font_color, bg_color
     chr_symbol = chr(chr_code).encode(enc).decode(enc)
-    image = Image.new("RGB", (img_dimensions,img_dimensions), (0,0,0)) #can do rgba too but not needed
+    image = Image.new("RGB", (img_dimensions,img_dimensions), bg_color) #can do rgba too but not needed
     font = ImageFont.truetype(font_file, font_size)
     draw = ImageDraw.Draw(image)
-    draw.text((5, 0), chr_symbol, (255,255,255), font=font)
+    draw.text((5, 0), chr_symbol, font_color, font=font)
     # to make image crisper
     img_resized = image.resize((img_dimensions//2,img_dimensions//2))
     save_file_name = "_".join(["ascii",str(chr_code),str(font_size)]) + ".png"
@@ -38,7 +43,7 @@ def generate_char_image(font_file, chr_code, font_size, img_dimensions, bitmap_o
         image.save(save_path)
     return image, save_file_name
 
-def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name="meta.txt", use_latin_1=False):
+def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name="meta.txt", use_latin_1=False, light_background=False):
     """Generate images for a charset with font and size settings.
     
     Args:
@@ -48,6 +53,7 @@ def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out
         bitmap_out_dir (string): Output directory
         meta_file_name (string) : filename, not the path; of the meta data file.
         use_latin_1 (bool, optional) : use latin-1 encoding
+        light_background (bool, optional): Generating table for light background/dark font. (Used for images with light backgrounds.)
     """
     # entire displayable ascii set
     meta_data={}
@@ -67,7 +73,7 @@ def generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out
             print(i, "couldnt render")
             continue
         print("Generating", i, end="\r")
-        _, save_path = generate_char_image(font_file, i, font_size, img_dimensions, bitmap_out_dir, use_latin_1=use_latin_1)
+        _, save_path = generate_char_image(font_file, i, font_size, img_dimensions, bitmap_out_dir, use_latin_1=use_latin_1, light_background=light_background)
         i2file[i] = save_path
         file2i[save_path] = i
     print("\ndone generating images.")
@@ -213,7 +219,7 @@ def generate_table(images_folder, out_file, extension="png", precision=4, meta_f
     print("done")
 
 
-def table_from_font(font_file, font_size, img_dimensions, bitmap_out_dir, out_file, extension="png", precision=4, meta_file_name="meta.txt", scaling_optimization=True, use_latin_1=False):
+def table_from_font(font_file, font_size, img_dimensions, bitmap_out_dir, out_file, extension="png", precision=4, meta_file_name="meta.txt", scaling_optimization=True, use_latin_1=False, light_background=False):
     """Create the stats table from the font file. Wrapper for the entire process.
     
     Args:
@@ -226,8 +232,9 @@ def table_from_font(font_file, font_size, img_dimensions, bitmap_out_dir, out_fi
         precision (int, optional): floating point precision to use in calculations
         meta_file_name (str, optional): Name of meta data file created in the process
         scaling_optimization (bool, optional): allow use of scaling optimization
+        light_background (bool, optional): Generating table for light background/dark font. (Used for images with light backgrounds.)
     """
     if not os.path.exists(bitmap_out_dir):
         os.makedirs(bitmap_out_dir)
-    generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name=meta_file_name, use_latin_1=use_latin_1)
+    generate_images_for_charset(font_file, font_size, img_dimensions, bitmap_out_dir, meta_file_name=meta_file_name, use_latin_1=use_latin_1, light_background=light_background)
     generate_table(bitmap_out_dir, out_file, extension=extension, precision=precision, meta_file_name=meta_file_name, scaling_optimization=scaling_optimization) 
